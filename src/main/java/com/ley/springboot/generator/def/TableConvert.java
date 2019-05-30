@@ -2,15 +2,17 @@ package com.ley.springboot.generator.def;
 
 /**
  * table convert
+ *
+ * @author liuenyuan
  **/
 public class TableConvert {
 
     /**
-     * get nullable
+     * get nullAble
      **/
-    public static String getNullable(String nullable) {
-        return !"YES".equals(nullable) && !"yes".equals(nullable) && !"y".equals(nullable) && !"Y".equals(nullable)
-                ? (!"NO".equals(nullable) && !"N".equals(nullable) && !"no".equals(nullable) && !"n".equals(nullable)
+    public static String getNullable(String nullAble) {
+        return !"YES".equals(nullAble) && !"yes".equals(nullAble) && !"y".equals(nullAble) && !"Y".equals(nullAble)
+                ? (!"NO".equals(nullAble) && !"N".equals(nullAble) && !"no".equals(nullAble) && !"n".equals(nullAble)
                 ? null : "N")
                 : "Y";
     }

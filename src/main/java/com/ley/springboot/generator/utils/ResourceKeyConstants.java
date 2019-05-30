@@ -8,6 +8,12 @@ package com.ley.springboot.generator.utils;
 public interface ResourceKeyConstants {
 
     //database start
+
+    /**
+     * database type mysql
+     * **/
+    String DATABASE_TYPE_MYSQL = "mysql";
+
     /**
      * driver name key
      **/
@@ -92,10 +98,6 @@ public interface ResourceKeyConstants {
 
     //ftl resource start
 
-    /**
-     * template path key
-     **/
-    String TEMPLATE_PATH_KEY = "template_path";
 
     /**
      * system encoding key

@@ -112,7 +112,6 @@ public class OracleDbCreateBean extends BaseDbCreateBean {
                 columnData.setNullable(nullable);
                 columnData.setColumnKey(columnKey);
                 formatAnnotation(columnData);
-                formatFieldClassType(columnData);
                 columnList.add(columnData);
             }
             boolean isDebugEnabled = log.isDebugEnabled();

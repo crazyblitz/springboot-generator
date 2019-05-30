@@ -2,6 +2,8 @@ package com.ley.springboot.generator.utils;
 
 /**
  * velocity template path constants
+ *
+ * @author liuenyuan
  **/
 public class TemplateConstants {
 

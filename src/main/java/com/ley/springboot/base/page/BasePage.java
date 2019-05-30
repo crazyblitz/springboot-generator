@@ -3,6 +3,8 @@ package com.ley.springboot.base.page;
 
 /**
  * base page
+ *
+ * @author liuenyuan
  **/
 public class BasePage {
 

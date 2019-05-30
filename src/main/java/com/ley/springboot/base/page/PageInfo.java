@@ -56,18 +56,18 @@ public class PageInfo<T> {
 
 
     public PageInfo() {
-        this.pageNo = Integer.valueOf(1);
-        this.pageSize = Integer.valueOf(10);
+        this.pageNo = 1;
+        this.pageSize = 10;
         this.list = new ArrayList();
         this.ext = new HashMap();
         this.orderBy = "";
-        this.pageSize = Integer.valueOf(-1);
+        this.pageSize = -1;
     }
 
 
     public PageInfo(HttpServletRequest request) {
-        this.pageNo = Integer.valueOf(1);
-        this.pageSize = Integer.valueOf(10);
+        this.pageNo = 1;
+        this.pageSize = 10;
         this.list = new ArrayList();
         this.ext = new HashMap();
         this.orderBy = "";
@@ -104,8 +104,8 @@ public class PageInfo<T> {
     }
 
     public PageInfo(Integer pageNo, Integer pageSize, Long count, List<T> list) {
-        this.pageNo = Integer.valueOf(1);
-        this.pageSize = Integer.valueOf(10);
+        this.pageNo = 1;
+        this.pageSize = 10;
         this.list = new ArrayList();
         this.ext = new HashMap();
         this.orderBy = "";
@@ -148,7 +148,7 @@ public class PageInfo<T> {
     }
 
     public void setPageSize(Integer pageSize) {
-        this.pageSize = Integer.valueOf(pageSize.intValue() <= 0 ? 10 : pageSize.intValue());
+        this.pageSize = Integer.valueOf(pageSize.intValue() <= 0 ? DEFAULT_PAGE_SIZE : pageSize.intValue());
     }
 
     public List<T> getList() {
@@ -176,6 +176,9 @@ public class PageInfo<T> {
         this.ext = ext;
     }
 
+    /**
+     * get page count
+     **/
     public Long getPageCount() {
         if (this.count.longValue() % (long) this.pageSize.intValue() != 0L) {
             this.pageCount = Long.valueOf(this.count.longValue() / (long) this.pageSize.intValue() + 1L);

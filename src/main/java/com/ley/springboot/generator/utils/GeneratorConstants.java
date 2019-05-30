@@ -2,6 +2,8 @@ package com.ley.springboot.generator.utils;
 
 /**
  * generator constants
+ *
+ * @author liuenyuan
  **/
 public interface GeneratorConstants {
 
@@ -21,4 +23,5 @@ public interface GeneratorConstants {
      * default encoding
      **/
     String DEFAULT_ENCODING = "UTF-8";
+
 }

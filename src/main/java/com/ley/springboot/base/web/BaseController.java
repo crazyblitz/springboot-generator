@@ -9,6 +9,8 @@ import java.util.List;
 /**
  * base controller<br/>
  * type <b>T</b> is entity type
+ *
+ * @author liuenyuan
  **/
 public class BaseController<T> {
 
@@ -16,6 +18,9 @@ public class BaseController<T> {
     /**
      * get page info
      *
+     * @param pager
+     * @param rows
+     * @return {@link PageInfo}
      * @see PageInfo
      **/
     protected PageInfo<T> getPageInfo(Pager pager, List<T> rows) {

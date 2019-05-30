@@ -2,52 +2,54 @@ package com.ley.springboot.base.page;
 
 /**
  * pager bean
- * **/
+ *
+ * @author liuenyuan
+ **/
 public class Pager {
 
     /**
      * page id
-     * **/
+     **/
     private int pageId = 1;
 
     /**
      * row count
-     * **/
+     **/
     private int rowCount = 0;
 
     /**
      * page size
-     * **/
+     **/
     private int pageSize = 10;
 
     /**
      * page count
-     * **/
+     **/
     private int pageCount = 0;
 
     /**
      * page of set
-     * **/
+     **/
     private int pageOffset = 0;
 
     /**
      * tail page
-     * **/
+     **/
     private int pageTail = 0;
 
     /**
      * order filed
-     * **/
+     **/
     private String orderField;
 
     /**
      * order direction
-     * **/
+     **/
     private boolean orderDirection = true;
 
     /**
      * page enabled
-     * **/
+     **/
     private boolean pageEnabled = true;
 
 
@@ -55,15 +57,17 @@ public class Pager {
 
     /**
      * start index
-     * **/
+     **/
     private int startIndex = 0;
 
     /**
      * end index
-     * **/
+     **/
     private int endIndex = 0;
 
-
+    /**
+     * get indexes
+     **/
     private int[] indexs;
 
     public int getLength() {
@@ -74,6 +78,9 @@ public class Pager {
         this.length = length;
     }
 
+    /**
+     * get indexes
+     **/
     public int[] getIndexs() {
         int len = this.getEndIndex() - this.getStartIndex() + 1;
         this.indexs = new int[len];
@@ -95,7 +102,6 @@ public class Pager {
     }
 
     public void setStartIndex(int startIndex) {
-        System.out.println("startIndx:" + this.pageId + ":" + this.pageSize);
         this.startIndex = (this.pageId - 1) * this.pageSize + 1;
     }
 

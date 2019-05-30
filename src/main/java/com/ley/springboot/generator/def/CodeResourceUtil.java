@@ -185,11 +185,7 @@ public class CodeResourceUtil {
         }
         return tablePrefix;
     }
-
-
-    public static final String getTemplatePath() {
-        return generatorConfigBundle.getString(ResourceKeyConstants.TEMPLATE_PATH_KEY);
-    }
+    
 
     public static final String getSourceRootPackage() {
         return generatorConfigBundle.getString(ResourceKeyConstants.SOURCE_ROOT_PACKAGE_KEY);

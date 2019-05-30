@@ -4,6 +4,7 @@ import com.ley.springboot.generator.DbCodeGenerateFactory;
 import com.ley.springboot.generator.def.CodeResourceUtil;
 import com.ley.springboot.generator.utils.CloseUtils;
 import com.ley.springboot.generator.utils.GeneratorConstants;
+import com.ley.springboot.generator.utils.ResourceKeyConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,8 @@ import java.util.*;
 
 /**
  * base db create bean
+ *
+ * @author liuenyuan
  **/
 @Data
 @AllArgsConstructor
@@ -30,12 +33,21 @@ public abstract class BaseDbCreateBean {
     private String username;
     private String password;
 
+    /**
+     * mysql get tables sql
+     **/
     protected final String MYSQL_SQL_TABLES = "SHOW TABLES";
 
+    /**
+     * oracle get tables sql
+     **/
     protected final String ORACLE_SQL_TABLES = "select TABLE_NAME from all_tables where owner=  " + "'" + CodeResourceUtil.getUsername().toUpperCase() + "'";
 
     /**
      * get jdbc connection
+     *
+     * @return
+     * @throws Exception
      **/
     protected abstract Connection getConnection() throws Exception;
 
@@ -46,7 +58,7 @@ public abstract class BaseDbCreateBean {
     public List<String> getTables() throws Exception {
         Connection connection = this.getConnection();
         PreparedStatement preparedStatement;
-        if (CodeResourceUtil.driverClassName.contains("mysql")) {
+        if (CodeResourceUtil.getDiverName().contains(ResourceKeyConstants.DATABASE_TYPE_MYSQL)) {
             preparedStatement = connection.prepareStatement(this.MYSQL_SQL_TABLES);
         } else {
             preparedStatement = connection.prepareStatement(this.ORACLE_SQL_TABLES);
@@ -77,6 +89,7 @@ public abstract class BaseDbCreateBean {
      *
      * @param tableName table name
      * @return return pk name list
+     * @throws Exception
      **/
     public abstract List<String> getColumnPkNameList(String tableName) throws Exception;
 
@@ -85,9 +98,11 @@ public abstract class BaseDbCreateBean {
      * get columns except primary key
      *
      * @param tableName
-     * @return return table {@link ColumnData}
+     * @return table {@link ColumnData}
+     * @throws Exception
      **/
     public abstract List<ColumnData> getColumnDatas(String tableName) throws Exception;
+
 
 
     /**
@@ -109,52 +124,6 @@ public abstract class BaseDbCreateBean {
         return set;
     }
 
-
-    /**
-     * format field class type
-     **/
-    protected void formatFieldClassType(ColumnData columnData) {
-        String fieldType = columnData.getColumnType();
-        String scale = columnData.getScale();
-        if ("N".equals(columnData.getNullable())) {
-            columnData.setOptionType("required:true");
-        }
-
-        if (!"datetime".equals(fieldType) && !"time".equals(fieldType) && !"timestamp".equals(fieldType)) {
-            if ("date".equals(fieldType)) {
-                columnData.setClassType("easyui-datebox");
-            } else if ("int".equals(fieldType)) {
-                columnData.setClassType("easyui-numberbox");
-            } else if ("number".equals(fieldType)) {
-                if (StringUtils.isNotBlank(scale) && Integer.parseInt(scale) > 0) {
-                    columnData.setClassType("easyui-numberbox");
-                    if (StringUtils.isNotBlank(columnData.getOptionType())) {
-                        columnData.setOptionType(columnData.getOptionType() + "," + "precision:2,groupSeparator:\',\'");
-                    } else {
-                        columnData.setOptionType("precision:2,groupSeparator:\',\'");
-                    }
-                } else {
-                    columnData.setClassType("easyui-numberbox");
-                }
-            } else if (!"float".equals(fieldType) && !"double".equals(fieldType) && !"decimal".equals(fieldType)) {
-                columnData.setClassType("easyui-validatebox");
-            } else {
-                columnData.setClassType("easyui-numberbox");
-                if (StringUtils.isNotBlank(columnData.getOptionType())) {
-                    columnData.setOptionType(columnData.getOptionType() + "," + "precision:2,groupSeparator:\',\'");
-                } else {
-                    columnData.setOptionType("precision:2,groupSeparator:\',\'");
-                }
-            }
-        } else {
-            columnData.setClassType("easyui-datetimebox");
-        }
-
-        if (columnData.getViewData() != null && columnData.getViewData().getDictionary() != null) {
-            columnData.setClassType("easyui-combobox");
-        }
-
-    }
 
     /**
      * format annotation
@@ -369,7 +338,7 @@ public abstract class BaseDbCreateBean {
      * get auto create sql
      **/
     public Map<String, Object> getAutoCreateSql(String tableName) throws Exception {
-        HashMap sqlMap = new HashMap();
+        HashMap sqlMap = new HashMap(8);
         List columnDatas = this.getColumnDatas(tableName);
         String columns = this.getColumnSplit(columnDatas);
         String[] columnList = this.getColumnList(columns);
@@ -468,7 +437,7 @@ public abstract class BaseDbCreateBean {
      **/
     public String getUpdateSelectiveSql(String tableName, List<ColumnData> columnList) throws SQLException {
         StringBuffer sb = new StringBuffer();
-        ColumnData cd = (ColumnData) columnList.get(0);
+        ColumnData cd = columnList.get(0);
         sb.append("\t<trim  suffixOverrides=\",\" >\n");
 
         for (int update = 1; update < columnList.size(); ++update) {

@@ -6,7 +6,9 @@ import java.io.IOException;
 /**
  * closeable utility class
  *
+ * @author liuenyuan
  * @see Closeable
+ * @see AutoCloseable
  **/
 public class CloseUtils {
 

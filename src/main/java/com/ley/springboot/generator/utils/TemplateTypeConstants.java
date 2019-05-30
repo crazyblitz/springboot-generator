@@ -2,6 +2,8 @@ package com.ley.springboot.generator.utils;
 
 /**
  * generator template type constants
+ *
+ * @author liuenyuan
  **/
 public class TemplateTypeConstants {
 
