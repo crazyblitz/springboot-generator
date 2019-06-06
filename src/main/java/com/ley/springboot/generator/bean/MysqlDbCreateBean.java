@@ -4,20 +4,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ley.springboot.generator.def.CodeResourceUtil;
 import com.ley.springboot.generator.utils.CloseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * db create bean
+ * mysql db create bean
+ *
+ * @author liuenyuan
  **/
 @Slf4j
 public class MysqlDbCreateBean extends BaseDbCreateBean {
 
-
-    protected final String SQLTables = "show tables";
 
     public MysqlDbCreateBean(String url, String username, String password) {
         super(url, username, password);
@@ -27,8 +26,8 @@ public class MysqlDbCreateBean extends BaseDbCreateBean {
     public Connection getConnection() throws SQLException {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException arg1) {
-            log.error("get mysql connection exception: {}", arg1.getMessage());
+        } catch (ClassNotFoundException e) {
+            log.error("get mysql connection exception: {}", e.getMessage());
         }
         Connection connection = DriverManager.getConnection(getUrl(), getUsername(), getPassword());
         return connection;
@@ -54,7 +53,10 @@ public class MysqlDbCreateBean extends BaseDbCreateBean {
         } finally {
             CloseUtils.closeable(resultSet, con);
         }
-        log.debug("pk names: {}", pkNames);
+        boolean isDebugEnabled = log.isDebugEnabled();
+        if (isDebugEnabled) {
+            log.debug("pk names: {}", pkNames);
+        }
         return pkNames;
     }
 
@@ -76,7 +78,7 @@ public class MysqlDbCreateBean extends BaseDbCreateBean {
                 String precision = "";
                 String scale = "";
                 String charMaxLength = "";
-                String nullable = "";
+                String nullAble = "";
                 String columnKey = "";
                 if (!CollectionUtils.isEmpty(columnPkNames)) {
                     for (String columnPkName : columnPkNames) {
@@ -107,8 +109,8 @@ public class MysqlDbCreateBean extends BaseDbCreateBean {
                 columnData.setColumnComment(comment);
                 columnData.setPrecision(precision);
                 columnData.setScale(scale);
-                columnData.setCharmaxLength(charMaxLength);
-                columnData.setNullable(nullable);
+                columnData.setCharMaxLength(charMaxLength);
+                columnData.setNullAble(nullAble);
                 columnData.setColumnKey(columnKey);
                 formatAnnotation(columnData);
                 columnList.add(columnData);
@@ -119,7 +121,7 @@ public class MysqlDbCreateBean extends BaseDbCreateBean {
             }
             return columnList;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("getColumnDatas() exception message: {}", e.getMessage());
         } finally {
             CloseUtils.closeable(rs, con);
         }

@@ -21,6 +21,8 @@ import org.springframework.util.CollectionUtils;
 
 /**
  * database code generate factory
+ *
+ * @author liuenyuan
  **/
 @Slf4j
 public class DbCodeGenerateFactory {
@@ -250,9 +252,9 @@ public class DbCodeGenerateFactory {
      **/
     private static List<ColumnData> getPkColumns(List<ColumnData> columnDatas) {
         ArrayList<ColumnData> pks = new ArrayList<>();
-        Iterator<ColumnData> arg1 = columnDatas.iterator();
-        while (arg1.hasNext()) {
-            ColumnData columnData = arg1.next();
+        Iterator<ColumnData> iterator = columnDatas.iterator();
+        while (iterator.hasNext()) {
+            ColumnData columnData = iterator.next();
             if ("PRI".equals(columnData.getColumnKey())) {
                 pks.add(columnData);
             }
@@ -266,10 +268,10 @@ public class DbCodeGenerateFactory {
      **/
     private static List<ColumnData> getNotPkColumns(List<ColumnData> columnDatas) {
         ArrayList<ColumnData> notPkColumns = new ArrayList();
-        Iterator<ColumnData> arg1 = columnDatas.iterator();
+        Iterator<ColumnData> iterator = columnDatas.iterator();
 
-        while (arg1.hasNext()) {
-            ColumnData columnData = arg1.next();
+        while (iterator.hasNext()) {
+            ColumnData columnData = iterator.next();
             if (!"PRI".equals(columnData.getColumnKey())) {
                 notPkColumns.add(columnData);
             }
@@ -282,8 +284,8 @@ public class DbCodeGenerateFactory {
      **/
     public static String getProjectPath() {
         String path = System.getProperty("user.dir").replace("\\", "/") + "/";
-        boolean isDebugEnabled=log.isDebugEnabled();
-        if(isDebugEnabled){
+        boolean isDebugEnabled = log.isDebugEnabled();
+        if (isDebugEnabled) {
             log.info("project path: {}", path);
         }
         return path;
@@ -296,8 +298,8 @@ public class DbCodeGenerateFactory {
         String projectPath = getProjectPath();
         File file = new File(projectPath);
         String projectParent = file.getParent();
-        boolean isDebugEnabled=log.isDebugEnabled();
-        if(isDebugEnabled){
+        boolean isDebugEnabled = log.isDebugEnabled();
+        if (isDebugEnabled) {
             log.debug("workspace: {}", projectParent);
         }
         return projectParent;

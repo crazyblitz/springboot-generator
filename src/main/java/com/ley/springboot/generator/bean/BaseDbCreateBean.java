@@ -2,6 +2,8 @@ package com.ley.springboot.generator.bean;
 
 import com.ley.springboot.generator.DbCodeGenerateFactory;
 import com.ley.springboot.generator.def.CodeResourceUtil;
+import com.ley.springboot.generator.type.JavaType;
+import com.ley.springboot.generator.type.JdbcType;
 import com.ley.springboot.generator.utils.CloseUtils;
 import com.ley.springboot.generator.utils.GeneratorConstants;
 import com.ley.springboot.generator.utils.ResourceKeyConstants;
@@ -104,7 +106,6 @@ public abstract class BaseDbCreateBean {
     public abstract List<ColumnData> getColumnDatas(String tableName) throws Exception;
 
 
-
     /**
      * get entity import classes
      **/
@@ -149,27 +150,27 @@ public abstract class BaseDbCreateBean {
      **/
     protected String getJdbcType(String javaType) {
         javaType = javaType.toLowerCase();
-        String jdbcType = null;
-        if (javaType.contains("string")) {
-            jdbcType = "VARCHAR";
-        } else if (javaType.contains("integer")) {
-            jdbcType = "INTEGER";
-        } else if (javaType.contains("short")) {
-            jdbcType = "SMALLINT";
-        } else if (javaType.contains("double")) {
-            jdbcType = "DOUBLE  ";
-        } else if (javaType.contains("float")) {
-            jdbcType = "FLOAT";
-        } else if (javaType.contains("bigdecimal")) {
-            jdbcType = "DECIMAL";
-        } else if (javaType.contains("date")) {
-            jdbcType = "TIMESTAMP";
-        } else if (javaType.contains("clob")) {
-            jdbcType = "CLOB";
-        } else if (javaType.contains("blob")) {
-            jdbcType = "BLOB";
+        String jdbcType;
+        if (javaType.contains(JavaType.STRING.getJavaType())) {
+            jdbcType = JdbcType.VARCHAR.getJdbcType().toUpperCase();
+        } else if (javaType.contains(JavaType.INTEGER.getJavaType())) {
+            jdbcType = JdbcType.INTEGER.getJdbcType().toUpperCase();
+        } else if (javaType.contains(JavaType.SHORT.getJavaType())) {
+            jdbcType = JdbcType.SMALLINT.getJdbcType().toUpperCase();
+        } else if (javaType.contains(JavaType.DOUBLE.getJavaType())) {
+            jdbcType = JdbcType.DOUBLE.getJdbcType().toUpperCase();
+        } else if (javaType.contains(JavaType.FLOAT.getJavaType())) {
+            jdbcType = JdbcType.FLOAT.getJdbcType().toUpperCase();
+        } else if (javaType.contains(JavaType.BIGDECIMAL.getJavaType())) {
+            jdbcType = JdbcType.DECEMAL.getJdbcType().toUpperCase();
+        } else if (javaType.contains(JavaType.DATE.getJavaType())) {
+            jdbcType = JdbcType.TIMESTAMP.getJdbcType().toUpperCase();
+        } else if (javaType.contains(JavaType.CLOB.getJavaType())) {
+            jdbcType = JdbcType.CLOB.getJdbcType().toUpperCase();
+        } else if (javaType.contains(JavaType.BLOB.getJavaType())) {
+            jdbcType = JdbcType.BLOB.getJdbcType().toUpperCase();
         } else {
-            jdbcType = "VARCHAR";
+            jdbcType = JdbcType.VARCHAR.getJdbcType().toUpperCase();
         }
         return jdbcType;
     }
@@ -178,21 +179,21 @@ public abstract class BaseDbCreateBean {
     /**
      * get java type
      **/
-    public String getJavaType(String jdbcType, String precision, String scale) {
+    protected String getJavaType(String jdbcType, String precision, String scale) {
         jdbcType = jdbcType.toLowerCase();
-        String javaType = null;
-        if (!jdbcType.contains("char") && !jdbcType.contains("text")) {
-            if (jdbcType.contains("bit")) {
+        String javaType;
+        if (!jdbcType.contains(JdbcType.CHAR.getJdbcType()) && !jdbcType.contains(JdbcType.TEXT.getJdbcType())) {
+            if (jdbcType.contains(JdbcType.BIT.getJdbcType())) {
                 javaType = "java.lang.Boolean";
-            } else if (jdbcType.contains("bigint")) {
+            } else if (jdbcType.contains(JdbcType.BIGINT.getJdbcType())) {
                 javaType = "java.lang.Long";
-            } else if (jdbcType.contains("int")) {
+            } else if (jdbcType.contains(JdbcType.INT.getJdbcType())) {
                 javaType = "java.lang.Integer";
-            } else if (jdbcType.contains("float")) {
+            } else if (jdbcType.contains(JdbcType.FLOAT.getJdbcType())) {
                 javaType = "java.lang.Float";
-            } else if (jdbcType.contains("double")) {
+            } else if (jdbcType.contains(JdbcType.DOUBLE.getJdbcType())) {
                 javaType = "java.lang.Double";
-            } else if (jdbcType.contains("number")) {
+            } else if (jdbcType.contains(JdbcType.NUMBER.getJdbcType())) {
                 if (StringUtils.isNotBlank(scale) && Integer.parseInt(scale) > 0) {
                     javaType = "java.lang.Double";
                 } else if (StringUtils.isNotBlank(precision) && Integer.parseInt(precision) > 6) {
@@ -200,13 +201,15 @@ public abstract class BaseDbCreateBean {
                 } else {
                     javaType = "java.lang.Integer";
                 }
-            } else if (jdbcType.contains("decimal")) {
+            } else if (jdbcType.contains(JdbcType.DECEMAL.getJdbcType())) {
                 javaType = "java.math.BigDecimal";
-            } else if (jdbcType.contains("date")) {
+            } else if (jdbcType.contains(JdbcType.DATE.getJdbcType())) {
                 javaType = "java.util.Date";
-            } else if (jdbcType.contains("time")) {
+            } else if (jdbcType.contains(JdbcType.TIME.getJdbcType())) {
                 javaType = "java.util.Date";
-            } else if (jdbcType.contains("clob")) {
+            } else if (jdbcType.contains(JdbcType.TIMESTAMP.getJdbcType())) {
+                javaType = "java.util.Date";
+            } else if (jdbcType.contains(JdbcType.CLOB.getJdbcType())) {
                 javaType = "java.sql.Clob";
             } else {
                 javaType = "java.lang.Object";
@@ -300,17 +303,17 @@ public abstract class BaseDbCreateBean {
         }
         String[] split = name.split("_");
         if (split.length > 1) {
-            StringBuffer arg5 = new StringBuffer();
+            StringBuffer buffer = new StringBuffer();
 
             for (int i = 0; i < split.length; ++i) {
                 if (split[i].length() > 0) {
                     String tempTableName = split[i].substring(0, 1).toUpperCase()
                             + split[i].substring(1, split[i].length());
-                    arg5.append(tempTableName);
+                    buffer.append(tempTableName);
                 }
             }
 
-            return arg5.toString();
+            return buffer.toString();
         } else {
             String tempTables = split[0].substring(0, 1).toUpperCase() + split[0].substring(1, split[0].length());
             return tempTables;
@@ -325,8 +328,8 @@ public abstract class BaseDbCreateBean {
         FileWriter writer = new FileWriter(new File(path + fileName));
         try {
             writer.write(new String(str.getBytes(GeneratorConstants.DEFAULT_ENCODING), GeneratorConstants.DEFAULT_ENCODING));
-        } catch (Throwable arg13) {
-            throw arg13;
+        } catch (Throwable throwable) {
+            throw throwable;
         } finally {
             CloseUtils.closeable(writer);
         }
@@ -366,22 +369,22 @@ public abstract class BaseDbCreateBean {
      * get delete sql
      **/
     public String getDeleteSql(String tableName, String[] columnsList, String[] datasList) throws SQLException {
-        StringBuffer sb = new StringBuffer();
-        sb.append("delete ");
-        sb.append("\t from ").append(tableName).append(" where ");
-        sb.append('`').append(columnsList[0]).append('`').append(" = #{").append(datasList[0]).append("}");
-        return sb.toString();
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("delete ");
+        buffer.append("\t from ").append(tableName).append(" where ");
+        buffer.append('`').append(columnsList[0]).append('`').append(" = #{").append(datasList[0]).append("}");
+        return buffer.toString();
     }
 
     /**
      * get select by id sql
      **/
     public String getSelectByIdSql(String tableName, String[] columnsList, String[] datasList) throws SQLException {
-        StringBuffer sb = new StringBuffer();
-        sb.append("select <include refid=\"Base_Column_List\" /> \n");
-        sb.append("\t from ").append(tableName).append(" where ");
-        sb.append(columnsList[0]).append(" = #{").append(datasList[0]).append("}");
-        return sb.toString();
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("select <include refid=\"Base_Column_List\" /> \n");
+        buffer.append("\t from ").append(tableName).append(" where ");
+        buffer.append(columnsList[0]).append(" = #{").append(datasList[0]).append("}");
+        return buffer.toString();
     }
 
     /**
@@ -389,7 +392,10 @@ public abstract class BaseDbCreateBean {
      **/
     public String getColumnFields(String columns) throws SQLException {
         String fields = columns;
-        log.debug("fields: {}", columns);
+        boolean isDebugEnabled = log.isDebugEnabled();
+        if (isDebugEnabled) {
+            log.debug("fields: {}", columns);
+        }
         if (columns != null && !"".equals(columns)) {
             fields = columns.replaceAll("\\|", ", ");
         }
@@ -408,27 +414,27 @@ public abstract class BaseDbCreateBean {
      * get update sql
      **/
     public String getUpdateSql(String tableName, String[] columnsList, String[] datasList) throws SQLException {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer buffer = new StringBuffer();
 
         for (int update = 1; update < columnsList.length; ++update) {
             String column = columnsList[update];
             String data = datasList[update];
             if (!"CREATETIME".equals(column.toUpperCase())) {
                 if ("UPDATETIME".equals(column.toUpperCase())) {
-                    sb.append('`').append(column).append('`').append(" = now()");
+                    buffer.append('`').append(column).append('`').append(" = now()");
                 } else {
-                    sb.append('`').append(column).append('`').append(" = #{").append(data).append("}");
+                    buffer.append('`').append(column).append('`').append(" = #{").append(data).append("}");
                 }
 
                 if (update + 1 < columnsList.length) {
-                    sb.append(",");
+                    buffer.append(",");
                 }
             }
         }
 
-        String arg7 = "update " + tableName + " set " + sb.toString() + " where " + columnsList[0] + "=#{"
+        String sql = "update " + tableName + " set " + buffer.toString() + " where " + columnsList[0] + "=#{"
                 + datasList[0] + "}";
-        return arg7;
+        return sql;
     }
 
 
@@ -436,27 +442,27 @@ public abstract class BaseDbCreateBean {
      * get update selective sql
      **/
     public String getUpdateSelectiveSql(String tableName, List<ColumnData> columnList) throws SQLException {
-        StringBuffer sb = new StringBuffer();
+        StringBuffer buffer = new StringBuffer();
         ColumnData cd = columnList.get(0);
-        sb.append("\t<trim  suffixOverrides=\",\" >\n");
+        buffer.append("\t<trim  suffixOverrides=\",\" >\n");
 
         for (int update = 1; update < columnList.size(); ++update) {
             ColumnData data = (ColumnData) columnList.get(update);
             String columnName = data.getMysqlColumnName();
-            sb.append("\t<if test=\"").append(data.getDataName()).append(" != null ");
+            buffer.append("\t<if test=\"").append(data.getDataName()).append(" != null ");
             if ("String" == data.getDataType()) {
-                sb.append(" and ").append(data.getDataName()).append(" != \'\'");
+                buffer.append(" and ").append(data.getDataName()).append(" != \'\'");
             }
 
-            sb.append(" \">\n\t\t");
-            sb.append('`').append(columnName + '`' + " = #{" + data.getDataName() + "},\n");
-            sb.append("\t</if>\n");
+            buffer.append(" \">\n\t\t");
+            buffer.append('`').append(columnName + '`' + " = #{" + data.getDataName() + "},\n");
+            buffer.append("\t</if>\n");
         }
 
-        sb.append("\t</trim>");
-        String arg7 = "update " + tableName + " set \n" + sb.toString() + " where " + cd.getMysqlColumnName() + "=#{"
+        buffer.append("\t</trim>");
+        String sql = "update " + tableName + " set \n" + buffer.toString() + " where " + cd.getMysqlColumnName() + "=#{"
                 + cd.getDataName() + "}";
-        return arg7;
+        return sql;
     }
 
 
@@ -476,7 +482,6 @@ public abstract class BaseDbCreateBean {
                 commonColumns.append(data.getOracleColumnName() + "|");
             }
         }
-
         return commonColumns.delete(commonColumns.length() - 1, commonColumns.length()).toString();
     }
 

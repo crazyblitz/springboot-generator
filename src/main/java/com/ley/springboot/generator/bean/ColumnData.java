@@ -30,9 +30,9 @@ public class ColumnData {
 
     private String columnType;
 
-    private String charmaxLength = "";
+    private String charMaxLength = "";
 
-    private String nullable;
+    private String nullAble;
 
     private String scale;
 

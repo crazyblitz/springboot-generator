@@ -14,6 +14,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * oracle db create bean
+ *
+ * @author liuenyuan
+ **/
 @Slf4j
 public class OracleDbCreateBean extends BaseDbCreateBean {
 
@@ -27,8 +32,8 @@ public class OracleDbCreateBean extends BaseDbCreateBean {
     public Connection getConnection() throws SQLException {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
-        } catch (ClassNotFoundException arg1) {
-            log.error("get Oracle connection exception: {}", arg1.getMessage());
+        } catch (ClassNotFoundException e) {
+            log.error("get Oracle connection exception: {}", e.getMessage());
         }
         Connection connection = DriverManager.getConnection(getUrl(), getUsername(), getPassword());
         log.info("连接Oracle数据库成功!");
@@ -68,7 +73,10 @@ public class OracleDbCreateBean extends BaseDbCreateBean {
         Connection con = this.getConnection();
         PreparedStatement ps = con.prepareStatement(sqlColumns);
         ResultSet rs = ps.executeQuery();
-        log.debug("sqlColumns: {}", sqlColumns);
+        boolean isDebugEnabled = log.isDebugEnabled();
+        if (isDebugEnabled) {
+            log.debug("sqlColumns: {}", sqlColumns);
+        }
         try {
             ArrayList<ColumnData> columnList = new ArrayList<>();
             while (rs.next()) {
@@ -77,8 +85,8 @@ public class OracleDbCreateBean extends BaseDbCreateBean {
                 String comment = "";
                 String precision = rs.getString(3);
                 String scale = rs.getString(4);
-                String charmaxLength = "";
-                String nullable = "";
+                String charMaxLength = "";
+                String nullAble = "";
                 String columnKey = "";
                 if (!CollectionUtils.isEmpty(columnPkNames)) {
                     for (String columnPkName : columnPkNames) {
@@ -108,13 +116,12 @@ public class OracleDbCreateBean extends BaseDbCreateBean {
                 columnData.setColumnComment(comment);
                 columnData.setPrecision(precision);
                 columnData.setScale(scale);
-                columnData.setCharmaxLength(charmaxLength);
-                columnData.setNullable(nullable);
+                columnData.setCharMaxLength(charMaxLength);
+                columnData.setNullAble(nullAble);
                 columnData.setColumnKey(columnKey);
                 formatAnnotation(columnData);
                 columnList.add(columnData);
             }
-            boolean isDebugEnabled = log.isDebugEnabled();
             if (isDebugEnabled) {
                 log.debug("columnList: {}", columnList);
             }
