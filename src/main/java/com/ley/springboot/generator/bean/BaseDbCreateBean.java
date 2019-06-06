@@ -230,40 +230,40 @@ public abstract class BaseDbCreateBean {
             packageName = "";
         }
 
-        StringBuffer sb = new StringBuffer();
-        sb.append("package ").append(packageName).append(";\r");
-        sb.append("\r");
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("package ").append(packageName).append(";\r");
+        buffer.append("\r");
 
         for (int temp = 0; temp < importName.length; ++temp) {
-            sb.append("import ").append(importName[temp]).append(";\r");
+            buffer.append("import ").append(importName[temp]).append(";\r");
         }
 
-        sb.append("\r");
-        sb.append("");
-        sb.append("\r");
-        sb.append("\rpublic class ").append(className);
+        buffer.append("\r");
+        buffer.append("");
+        buffer.append("\r");
+        buffer.append("\rpublic class ").append(className);
         if (extendsClassName != null) {
-            sb.append(" extends ").append(extendsClassName);
+            buffer.append(" extends ").append(extendsClassName);
         }
 
         if (type == 1) {
-            sb.append(" ").append("implements java.io.Serializable {\r");
+            buffer.append(" ").append("implements java.io.Serializable {\r");
         } else {
-            sb.append(" {\r");
+            buffer.append(" {\r");
         }
 
-        sb.append("\r\t");
-        sb.append("private static final long serialVersionUID = 1L;\r\t");
-        String arg9 = className.substring(0, 1).toLowerCase();
-        arg9 = arg9 + className.substring(1, className.length());
+        buffer.append("\r\t");
+        buffer.append("private static final long serialVersionUID = 1L;\r\t");
+        String result = className.substring(0, 1).toLowerCase();
+        result = result + className.substring(1, className.length());
         if (type == 1) {
-            sb.append("private " + className + " " + arg9 + "; // entity ");
+            buffer.append("private " + className + " " + result + "; // entity ");
         }
 
-        sb.append(content);
-        sb.append("\r}");
-        System.out.println(sb.toString());
-        this.createFile(createPath, "", sb.toString());
+        buffer.append(content);
+        buffer.append("\r}");
+        System.out.println(buffer.toString());
+        this.createFile(createPath, "", buffer.toString());
     }
 
     /**
