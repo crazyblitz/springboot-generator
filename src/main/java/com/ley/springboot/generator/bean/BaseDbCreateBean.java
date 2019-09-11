@@ -131,7 +131,7 @@ public abstract class BaseDbCreateBean {
      **/
     void formatAnnotation(ColumnData columnt) {
         String comment = columnt.getColumnComment();
-        ViewData vd = new ViewData();
+        ColumnCommentViewData vd = new ColumnCommentViewData();
         if (StringUtils.isNotEmpty(comment)) {
             comment = comment.replaceAll("，", ",");
             if (comment.contains(",")) {
@@ -142,7 +142,7 @@ public abstract class BaseDbCreateBean {
                 vd.setTitle(comment);
             }
         }
-        columnt.setViewData(vd);
+        columnt.setColumnCommentViewData(vd);
     }
 
     /**

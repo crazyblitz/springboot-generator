@@ -46,6 +46,6 @@ public class ColumnData {
 
     private String columnKey;
 
-    private ViewData viewData;
+    private ColumnCommentViewData columnCommentViewData;
 
 }
