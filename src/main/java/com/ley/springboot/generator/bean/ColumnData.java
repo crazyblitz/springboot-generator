@@ -4,6 +4,8 @@ import lombok.Data;
 
 /**
  * column data
+ *
+ * @author liuenyuan
  **/
 @Data
 public class ColumnData {

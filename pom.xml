@@ -112,25 +112,25 @@
         </developer>
     </developers>
 
-    <repositories>
-        <repository>
-            <id>leyboy.nexus</id>
-            <url>http://softyuan.cn:9095/nexus/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <!--<repositories>-->
+    <!--<repository>-->
+    <!--<id>leyboy.nexus</id>-->
+    <!--<url>http://softyuan.cn:9095/nexus/content/groups/public</url>-->
+    <!--<releases>-->
+    <!--<enabled>true</enabled>-->
+    <!--</releases>-->
+    <!--<snapshots>-->
+    <!--<enabled>true</enabled>-->
+    <!--</snapshots>-->
+    <!--</repository>-->
+    <!--</repositories>-->
 
-    <distributionManagement>
-        <repository>
-            <id>leyboy.nexus</id>
-            <url>http://softyuan.cn:9095/nexus/content/repositories/leyboy</url>
-        </repository>
-    </distributionManagement>
+    <!--<distributionManagement>-->
+    <!--<repository>-->
+    <!--<id>leyboy.nexus</id>-->
+    <!--<url>http://softyuan.cn:9095/nexus/content/repositories/leyboy</url>-->
+    <!--</repository>-->
+    <!--</distributionManagement>-->
 
 
     <build>

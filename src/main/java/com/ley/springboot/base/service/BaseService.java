@@ -6,6 +6,7 @@ import com.ley.springboot.base.entity.BaseEntity;
 import com.ley.springboot.base.page.BasePage;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -100,8 +101,8 @@ public abstract class BaseService<T extends BaseEntity, K> {
      **/
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Throwable.class, readOnly = true)
     public List<T> queryByPage(BasePage page) throws Exception {
-        Integer rowCount = Integer.valueOf(this.queryByCount(page));
-        page.getPager().setRowCount(rowCount.intValue());
+        int rowCount = this.queryByCount(page);
+        page.getPager().setRowCount(rowCount);
         return this.getDao().queryByPage(page);
     }
 
@@ -110,8 +111,12 @@ public abstract class BaseService<T extends BaseEntity, K> {
      **/
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Throwable.class, readOnly = true)
     public T queryBySingle(BasePage page) throws Exception {
-        page.setPageSize(Integer.valueOf(1));
-        List results = this.getDao().queryByList(page);
-        return (T) (null != results && results.size() != 0 ? (BaseEntity) results.get(0) : null);
+        page.setPageSize(1);
+        List<T> results = this.getDao().queryByList(page);
+        if (!CollectionUtils.isEmpty(results)) {
+            return results.get(0);
+        } else {
+            return null;
+        }
     }
 }

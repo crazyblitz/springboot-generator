@@ -11,12 +11,12 @@ public class BasePage {
     /**
      * current page and default current is 1
      **/
-    private Integer page = Integer.valueOf(1);
+    private Integer page = 1;
 
     /**
      * page size and default page size is 20
      **/
-    private Integer pageSize = Integer.valueOf(20);
+    private Integer pageSize = 20;
 
     /**
      * start index and it use for oracle
@@ -49,8 +49,8 @@ public class BasePage {
     private Pager pager = new Pager();
 
     public Pager getPager() {
-        this.pager.setPageId(this.getPage().intValue());
-        this.pager.setPageSize(this.getPageSize().intValue());
+        this.pager.setPageId(this.getPage());
+        this.pager.setPageSize(this.getPageSize());
         String orderField = "";
         if (this.orderBy != null && this.orderBy.trim().length() > 0) {
             orderField = this.orderBy;
@@ -113,7 +113,7 @@ public class BasePage {
     }
 
     public void setStartIndex(Integer startIndex) {
-        this.startIndex = Integer.valueOf((this.page.intValue() - 1) * this.pageSize.intValue() + 1);
+        this.startIndex = (this.page - 1) * this.pageSize + 1;
     }
 
     public Integer getEndIndex() {
@@ -121,6 +121,6 @@ public class BasePage {
     }
 
     public void setEndIndex(Integer endIndex) {
-        this.endIndex = Integer.valueOf(this.page.intValue() * this.pageSize.intValue());
+        this.endIndex = this.page * this.pageSize;
     }
 }

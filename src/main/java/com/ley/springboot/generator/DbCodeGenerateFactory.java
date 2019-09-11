@@ -10,8 +10,6 @@ import com.ley.springboot.generator.bean.ColumnData;
 import com.ley.springboot.generator.bean.MysqlDbCreateBean;
 import com.ley.springboot.generator.bean.OracleDbCreateBean;
 import com.ley.springboot.generator.def.CodeResourceUtil;
-import com.ley.springboot.generator.utils.GeneratorConstants;
-import com.ley.springboot.generator.utils.ResourceKeyConstants;
 import com.ley.springboot.generator.utils.TemplateConstants;
 import com.ley.springboot.generator.utils.TemplateTypeConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -124,10 +122,10 @@ public class DbCodeGenerateFactory {
      * @param entityPackage entity generate package
      **/
     public static void codeGenerate(String tableName, String entityPackage) {
-        List columnDatas;
+        List<ColumnData> columnDatas;
         try {
             //获取数据库的列
-            columnDatas = createBean.getColumnDatas(tableName);
+            columnDatas = createBean.getColumnDataList(tableName);
         } catch (Exception arg55) {
             arg55.printStackTrace();
             return;
@@ -137,10 +135,9 @@ public class DbCodeGenerateFactory {
         //获取数据库表主键个数
         int pkColumnCount = pkColumnDatas.size();
         String shortClassName = createBean.formatClassName(tableName);
-        String className = shortClassName;
-        String lowerName = className.substring(0, 1).toLowerCase() + className.substring(1, className.length());
+        String lowerName = shortClassName.substring(0, 1).toLowerCase() + shortClassName.substring(1, shortClassName.length());
         String pathName = shortClassName.substring(0, 1).toLowerCase()
-                + shortClassName.substring(1, shortClassName.length());
+                + shortClassName.substring(1);
         String coreProjectPath = workspacePath + "/" + CodeResourceUtil.coreProject;
         String restProjectPath = workspacePath + "/" + CodeResourceUtil.restProject;
         String coreProjectSrcPath = coreProjectPath + "/" + CodeResourceUtil.sourceRootPackage + "/"
@@ -150,13 +147,13 @@ public class DbCodeGenerateFactory {
                 + CodeResourceUtil.businessPackageUrl;
         String srcPath = projectPath + CodeResourceUtil.sourceRootPackage + "\\";
         (new StringBuilder(String.valueOf(srcPath))).append(CodeResourceUtil.businessPackageUrl).append("\\").toString();
-        String pagePath = "/" + entityPackage + "/page/" + className + "Page.java";
-        String entityPath = "/" + entityPackage + "/entity/" + className + ".java";
-        String entityKeyPath = "/" + entityPackage + "/entity/" + className + "Key.java";
-        String mapperPath = "/" + entityPackage + "/dao/" + className + "Dao.java";
-        String servicePath = "/" + entityPackage + "/service/" + className + "Service.java";
-        String controllerPath = "/" + entityPackage + "/controller/" + className + "Controller.java";
-        String sqlMapperPath = "/mapper/" + entityPackage + "/" + className + "Mapper.xml";
+        String pagePath = "/" + entityPackage + "/page/" + shortClassName + "Page.java";
+        String entityPath = "/" + entityPackage + "/entity/" + shortClassName + ".java";
+        String entityKeyPath = "/" + entityPackage + "/entity/" + shortClassName + "Key.java";
+        String mapperPath = "/" + entityPackage + "/dao/" + shortClassName + "Dao.java";
+        String servicePath = "/" + entityPackage + "/service/" + shortClassName + "Service.java";
+        String controllerPath = "/" + entityPackage + "/controller/" + shortClassName + "Controller.java";
+        String sqlMapperPath = "/mapper/" + entityPackage + "/" + shortClassName + "Mapper.xml";
         String lowerNames = lowerName + "s";
 
         if (lowerName.endsWith("y")) {
@@ -168,7 +165,7 @@ public class DbCodeGenerateFactory {
         VelocityContext context = new VelocityContext();
 
         //define velocity context properties
-        context.put("className", className);
+        context.put("className", shortClassName);
         context.put("lowerName", lowerName);
         context.put("pathName", pathName);
         context.put("tableName", tableName);
@@ -180,7 +177,7 @@ public class DbCodeGenerateFactory {
         context.put("currentDate", currentDate);
         context.put("columnDatas", columnDatas);
         context.put("pkColumnDatas", pkColumnDatas);
-        context.put("pkColumnCount", Integer.valueOf(pkColumnCount));
+        context.put("pkColumnCount", pkColumnCount);
         context.put("notPkColumnDatas", notPkColumnDatas);
         context.put("entityImportClasses", createBean.getEntityImportClasses(columnDatas));
         context.put("velocityCount", pkColumnDatas.size());
@@ -198,10 +195,8 @@ public class DbCodeGenerateFactory {
 
         BitSet flag = new BitSet();
         String[] pageGenTypes = CodeResourceUtil.pageGenType.split(",");
-        int pageGenTypeLength = pageGenTypes.length;
 
-        for (int i = 0; i < pageGenTypeLength; ++i) {
-            String genType = pageGenTypes[i];
+        for (String genType : pageGenTypes) {
             flag.set(Integer.parseInt(genType));
         }
 
@@ -251,10 +246,8 @@ public class DbCodeGenerateFactory {
      * get pk columns
      **/
     private static List<ColumnData> getPkColumns(List<ColumnData> columnDatas) {
-        ArrayList<ColumnData> pks = new ArrayList<>();
-        Iterator<ColumnData> iterator = columnDatas.iterator();
-        while (iterator.hasNext()) {
-            ColumnData columnData = iterator.next();
+        List<ColumnData> pks = new ArrayList<>();
+        for (ColumnData columnData : columnDatas) {
             if ("PRI".equals(columnData.getColumnKey())) {
                 pks.add(columnData);
             }
@@ -267,11 +260,9 @@ public class DbCodeGenerateFactory {
      * get not pk columns
      **/
     private static List<ColumnData> getNotPkColumns(List<ColumnData> columnDatas) {
-        ArrayList<ColumnData> notPkColumns = new ArrayList();
-        Iterator<ColumnData> iterator = columnDatas.iterator();
+        List<ColumnData> notPkColumns = new ArrayList<>();
 
-        while (iterator.hasNext()) {
-            ColumnData columnData = iterator.next();
+        for (ColumnData columnData : columnDatas) {
             if (!"PRI".equals(columnData.getColumnKey())) {
                 notPkColumns.add(columnData);
             }

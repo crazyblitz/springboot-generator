@@ -38,12 +38,12 @@ public abstract class BaseDbCreateBean {
     /**
      * mysql get tables sql
      **/
-    protected final String MYSQL_SQL_TABLES = "SHOW TABLES";
+    protected static final String MYSQL_SQL_TABLES = "SHOW TABLES";
 
     /**
      * oracle get tables sql
      **/
-    protected final String ORACLE_SQL_TABLES = "select TABLE_NAME from all_tables where owner=  " + "'" + CodeResourceUtil.getUsername().toUpperCase() + "'";
+    protected static final String ORACLE_SQL_TABLES = "select TABLE_NAME from all_tables where owner=  " + "'" + CodeResourceUtil.getUsername().toUpperCase() + "'";
 
     /**
      * get jdbc connection
@@ -61,9 +61,9 @@ public abstract class BaseDbCreateBean {
         Connection connection = this.getConnection();
         PreparedStatement preparedStatement;
         if (CodeResourceUtil.getDiverName().contains(ResourceKeyConstants.DATABASE_TYPE_MYSQL)) {
-            preparedStatement = connection.prepareStatement(this.MYSQL_SQL_TABLES);
+            preparedStatement = connection.prepareStatement(MYSQL_SQL_TABLES);
         } else {
-            preparedStatement = connection.prepareStatement(this.ORACLE_SQL_TABLES);
+            preparedStatement = connection.prepareStatement(ORACLE_SQL_TABLES);
         }
         ResultSet resultSet = preparedStatement.executeQuery();
         try {
@@ -103,14 +103,14 @@ public abstract class BaseDbCreateBean {
      * @return table {@link ColumnData}
      * @throws Exception
      **/
-    public abstract List<ColumnData> getColumnDatas(String tableName) throws Exception;
+    public abstract List<ColumnData> getColumnDataList(String tableName) throws Exception;
 
 
     /**
      * get entity import classes
      **/
     public Set<String> getEntityImportClasses(List<ColumnData> columns) {
-        Set<String> set = new TreeSet();
+        Set<String> set = new TreeSet<>();
         Iterator<ColumnData> iterator = columns.iterator();
         while (iterator.hasNext()) {
             String tp = iterator.next().getDataType();
@@ -129,14 +129,14 @@ public abstract class BaseDbCreateBean {
     /**
      * format annotation
      **/
-    protected void formatAnnotation(ColumnData columnt) {
+    void formatAnnotation(ColumnData columnt) {
         String comment = columnt.getColumnComment();
         ViewData vd = new ViewData();
         if (StringUtils.isNotEmpty(comment)) {
             comment = comment.replaceAll("，", ",");
-            if (comment.indexOf(",") != -1) {
+            if (comment.contains(",")) {
                 vd.setTitle(comment.split(",")[0]);
-            } else if (comment.indexOf("，") != -1) {
+            } else if (comment.contains("，")) {
                 vd.setTitle(comment.split("，")[0]);
             } else {
                 vd.setTitle(comment);
@@ -148,7 +148,7 @@ public abstract class BaseDbCreateBean {
     /**
      * get jdbc type
      **/
-    protected String getJdbcType(String javaType) {
+    String getJdbcType(String javaType) {
         javaType = javaType.toLowerCase();
         String jdbcType;
         if (javaType.contains(JavaType.STRING.getJavaType())) {
@@ -179,7 +179,7 @@ public abstract class BaseDbCreateBean {
     /**
      * get java type
      **/
-    protected String getJavaType(String jdbcType, String precision, String scale) {
+    String getJavaType(String jdbcType, String precision, String scale) {
         jdbcType = jdbcType.toLowerCase();
         String javaType;
         if (!jdbcType.contains(JdbcType.CHAR.getJdbcType()) && !jdbcType.contains(JdbcType.TEXT.getJdbcType())) {
@@ -239,7 +239,6 @@ public abstract class BaseDbCreateBean {
         }
 
         buffer.append("\r");
-        buffer.append("");
         buffer.append("\r");
         buffer.append("\rpublic class ").append(className);
         if (extendsClassName != null) {
@@ -276,7 +275,7 @@ public abstract class BaseDbCreateBean {
     /**
      * format table name
      **/
-    public String formatTableName(String name) {
+    private String formatTableName(String name) {
         String[] tablePrefixes = CodeResourceUtil.tablePrefix.split(",");
         //转换成小写
         name = name.toLowerCase();
@@ -297,7 +296,7 @@ public abstract class BaseDbCreateBean {
     /**
      * format name
      **/
-    public String formatName(String name) {
+    String formatName(String name) {
         if (name.contains("_")) {
             name = name.toLowerCase();
         }
@@ -307,16 +306,17 @@ public abstract class BaseDbCreateBean {
 
             for (int i = 0; i < split.length; ++i) {
                 if (split[i].length() > 0) {
+                    int len = split[i].length();
                     String tempTableName = split[i].substring(0, 1).toUpperCase()
-                            + split[i].substring(1, split[i].length());
+                            + split[i].substring(1, len);
                     buffer.append(tempTableName);
                 }
             }
 
             return buffer.toString();
         } else {
-            String tempTables = split[0].substring(0, 1).toUpperCase() + split[0].substring(1, split[0].length());
-            return tempTables;
+            int len = split[0].length();
+            return split[0].substring(0, 1).toUpperCase() + split[0].substring(1, len);
         }
     }
 
@@ -324,7 +324,7 @@ public abstract class BaseDbCreateBean {
     /**
      * create file
      **/
-    public void createFile(String path, String fileName, String str) throws IOException {
+    private void createFile(String path, String fileName, String str) throws IOException {
         FileWriter writer = new FileWriter(new File(path + fileName));
         try {
             writer.write(new String(str.getBytes(GeneratorConstants.DEFAULT_ENCODING), GeneratorConstants.DEFAULT_ENCODING));
@@ -341,19 +341,19 @@ public abstract class BaseDbCreateBean {
      * get auto create sql
      **/
     public Map<String, Object> getAutoCreateSql(String tableName) throws Exception {
-        HashMap sqlMap = new HashMap(8);
-        List columnDatas = this.getColumnDatas(tableName);
-        String columns = this.getColumnSplit(columnDatas);
+        HashMap<String, Object> sqlMap = new HashMap<>(8);
+        List<ColumnData> columnDataList = this.getColumnDataList(tableName);
+        String columns = this.getColumnSplit(columnDataList);
         String[] columnList = this.getColumnList(columns);
         String columnFields = this.getColumnFields(columns);
-        String datas = this.getDataSplit(columnDatas);
-        String[] datasList = this.getColumnList(datas);
+        String dataSplit = this.getDataSplit(columnDataList);
+        String[] dataSplitList = this.getColumnList(dataSplit);
         String insert = "insert into " + tableName + "(" + "<include refid=\"Base_Column_List\" />" + ")\n values(#{"
-                + datas.replaceAll("\\|", "},#{") + "})";
-        String update = this.getUpdateSql(tableName, columnList, datasList);
-        String updateSelective = this.getUpdateSelectiveSql(tableName, columnDatas);
-        String selectById = this.getSelectByIdSql(tableName, columnList, datasList);
-        String delete = this.getDeleteSql(tableName, columnList, datasList);
+                + dataSplit.replaceAll("\\|", "},#{") + "})";
+        String update = this.getUpdateSql(tableName, columnList, dataSplitList);
+        String updateSelective = this.getUpdateSelectiveSql(tableName, columnDataList);
+        String selectById = this.getSelectByIdSql(tableName, columnList, dataSplitList);
+        String delete = this.getDeleteSql(tableName, columnList, dataSplitList);
         sqlMap.put("columnList", columnList);
         sqlMap.put("columnFields", columnFields);
         sqlMap.put("insert", insert.replace("#{createTime}", "now()").replace("#{updateTime}", "now()"));
@@ -368,7 +368,7 @@ public abstract class BaseDbCreateBean {
     /**
      * get delete sql
      **/
-    public String getDeleteSql(String tableName, String[] columnsList, String[] datasList) throws SQLException {
+    private String getDeleteSql(String tableName, String[] columnsList, String[] datasList) throws SQLException {
         StringBuffer buffer = new StringBuffer();
         buffer.append("delete ");
         buffer.append("\t from ").append(tableName).append(" where ");
@@ -379,7 +379,7 @@ public abstract class BaseDbCreateBean {
     /**
      * get select by id sql
      **/
-    public String getSelectByIdSql(String tableName, String[] columnsList, String[] datasList) throws SQLException {
+    private String getSelectByIdSql(String tableName, String[] columnsList, String[] datasList) throws SQLException {
         StringBuffer buffer = new StringBuffer();
         buffer.append("select <include refid=\"Base_Column_List\" /> \n");
         buffer.append("\t from ").append(tableName).append(" where ");
@@ -390,7 +390,7 @@ public abstract class BaseDbCreateBean {
     /**
      * get column fields
      **/
-    public String getColumnFields(String columns) throws SQLException {
+    private String getColumnFields(String columns) throws SQLException {
         String fields = columns;
         boolean isDebugEnabled = log.isDebugEnabled();
         if (isDebugEnabled) {
@@ -405,15 +405,14 @@ public abstract class BaseDbCreateBean {
     /**
      * get column list
      **/
-    public String[] getColumnList(String columns) throws SQLException {
-        String[] columnList = columns.split("[|]");
-        return columnList;
+    private String[] getColumnList(String columns) throws SQLException {
+        return columns.split("[|]");
     }
 
     /**
      * get update sql
      **/
-    public String getUpdateSql(String tableName, String[] columnsList, String[] datasList) throws SQLException {
+    private String getUpdateSql(String tableName, String[] columnsList, String[] datasList) throws SQLException {
         StringBuffer buffer = new StringBuffer();
 
         for (int update = 1; update < columnsList.length; ++update) {
@@ -441,7 +440,7 @@ public abstract class BaseDbCreateBean {
     /**
      * get update selective sql
      **/
-    public String getUpdateSelectiveSql(String tableName, List<ColumnData> columnList) throws SQLException {
+    private String getUpdateSelectiveSql(String tableName, List<ColumnData> columnList) throws SQLException {
         StringBuffer buffer = new StringBuffer();
         ColumnData cd = columnList.get(0);
         buffer.append("\t<trim  suffixOverrides=\",\" >\n");
@@ -469,7 +468,7 @@ public abstract class BaseDbCreateBean {
     /**
      * get column split
      **/
-    public String getColumnSplit(List<ColumnData> columnList) throws SQLException {
+    private String getColumnSplit(List<ColumnData> columnList) throws SQLException {
         StringBuffer commonColumns = new StringBuffer();
         Iterator iterator = columnList.iterator();
 
@@ -489,7 +488,7 @@ public abstract class BaseDbCreateBean {
     /**
      * get data split
      **/
-    public String getDataSplit(List<ColumnData> columnList) throws SQLException {
+    private String getDataSplit(List<ColumnData> columnList) throws SQLException {
         StringBuffer commonColumns = new StringBuffer();
         Iterator iterator = columnList.iterator();
 

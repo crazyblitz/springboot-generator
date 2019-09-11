@@ -26,10 +26,10 @@ public class BaseController<T> {
     protected PageInfo<T> getPageInfo(Pager pager, List<T> rows) {
         PageInfo pageInfo = new PageInfo();
         pageInfo.setList(rows);
-        pageInfo.setCount(Long.valueOf((long) pager.getRowCount()));
-        pageInfo.setPageSize(Integer.valueOf(pager.getPageSize()));
-        pageInfo.setPageCount(Long.valueOf((long) pager.getPageCount()));
-        pageInfo.setPageNo(Integer.valueOf(pager.getPageId()));
+        pageInfo.setCount((long) pager.getRowCount());
+        pageInfo.setPageSize(pager.getPageSize());
+        pageInfo.setPageCount((long) pager.getPageCount());
+        pageInfo.setPageNo(pager.getPageId());
         return pageInfo;
     }
 

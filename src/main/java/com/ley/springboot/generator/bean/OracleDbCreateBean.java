@@ -65,7 +65,7 @@ public class OracleDbCreateBean extends BaseDbCreateBean {
     }
 
     @Override
-    public List<ColumnData> getColumnDatas(String tableName) throws Exception {
+    public List<ColumnData> getColumnDataList(String tableName) throws Exception {
         String sqlColumns = "SELECT atc.COLUMN_NAME, atc.DATA_TYPE, atc.DATA_PRECISION, atc.DATA_SCALE FROM user_tab_cols atc WHERE table_name=\'"
                 + tableName.toUpperCase() + "\'";
         //get column primary key names

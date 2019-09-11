@@ -62,7 +62,7 @@ public class MysqlDbCreateBean extends BaseDbCreateBean {
 
 
     @Override
-    public List<ColumnData> getColumnDatas(String tableName) throws Exception {
+    public List<ColumnData> getColumnDataList(String tableName) throws Exception {
         //get column primary key names
         List<String> columnPkNames = this.getColumnPkNameList(tableName);
         Connection con = this.getConnection();
@@ -121,7 +121,7 @@ public class MysqlDbCreateBean extends BaseDbCreateBean {
             }
             return columnList;
         } catch (Exception e) {
-            log.error("getColumnDatas() exception message: {}", e.getMessage());
+            log.error("getColumnDataList() exception message: {}", e.getMessage());
         } finally {
             CloseUtils.closeable(rs, con);
         }
